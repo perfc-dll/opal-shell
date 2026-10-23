@@ -14,6 +14,23 @@ Singleton {
 
     readonly property bool anyOpen: panel !== ""
 
+    // ---- settings app (a normal window, not a panel) ------------------------------
+    property bool settingsOpen: false
+    property string settingsPage: "general"
+
+    function openSettings(page) {
+        if (page)
+            settingsPage = page;
+        close();
+        settingsOpen = true;
+    }
+    function toggleSettings() {
+        if (settingsOpen)
+            settingsOpen = false;
+        else
+            openSettings("");
+    }
+
     // ---- island OSD ------------------------------------------------------------------
     property string osdKind: ""              // "", volume, brightness, mic, kbd
     property real osdValue: 0

@@ -8,6 +8,7 @@ Item {
     property string title: ""
     property bool toggleOn: false
     property bool busy: false
+    property bool showBack: true
     signal back
     signal toggled
 
@@ -15,6 +16,8 @@ Item {
 
     IconButton {
         id: backBtn
+        visible: root.showBack
+        width: visible ? implicitWidth : 0
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         icon: "arrow_back"
@@ -22,7 +25,7 @@ Item {
     }
     StyledText {
         anchors.left: backBtn.right
-        anchors.leftMargin: 8
+        anchors.leftMargin: root.showBack ? 8 : 0
         anchors.verticalCenter: parent.verticalCenter
         text: root.title
         font.pixelSize: Theme.fontXl - 2

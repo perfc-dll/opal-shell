@@ -81,6 +81,7 @@ Rectangle {
                 color: root.open ? root.fg : Power.charging ? Theme.good : Power.percent < 0.15 ? Theme.bad : Power.percent < 0.3 ? Theme.warn : root.fg
             }
             StyledText {
+                visible: Settings.barBatteryPercent
                 anchors.verticalCenter: parent.verticalCenter
                 text: Math.round(Power.percent * 100) + "%"
                 font.pixelSize: Theme.fontSm

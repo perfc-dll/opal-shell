@@ -505,6 +505,7 @@ binds {
     Mod+V hotkey-overlay-title="Opal: clipboard history" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "clipboard"; }
     Mod+A hotkey-overlay-title="Opal: control centre" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "control"; }
     Mod+N hotkey-overlay-title="Opal: dashboard & notifications" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "dashboard"; }
+    Mod+I hotkey-overlay-title="Opal: settings" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "settings"; }
     Mod+W hotkey-overlay-title="Opal: wallpapers" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "wallpaper"; }
     Mod+Shift+W hotkey-overlay-title="Opal: random wallpaper" { spawn "qs" "-c" "opal" "ipc" "call" "wallpaper" "random"; }
     Mod+Shift+B hotkey-overlay-title="Opal: show/hide bar" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "bar"; }
@@ -580,4 +581,33 @@ binds {
 window-rule {
     match app-id=r#"^xfce-polkit$"#
     block-out-from "screen-capture"
+}
+
+// Opal Settings: a floating glass window (Super+I).
+window-rule {
+    match title="^Opal Settings$"
+
+    open-floating true
+    geometry-corner-radius 24
+    clip-to-geometry true
+
+    background-effect {
+        blur true
+        xray false
+        saturation 1.8
+        noise 0.05
+    }
+
+    shadow {
+        on
+        softness 50
+        spread -6
+        offset x=0 y=12
+        color "#c065d150"
+        inactive-color "#00000050"
+    }
+
+    border {
+        off
+    }
 }

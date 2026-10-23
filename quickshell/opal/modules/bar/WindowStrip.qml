@@ -111,6 +111,7 @@ Row {
 
     StyledText {
         id: title
+        visible: Settings.barTitle
         anchors.verticalCenter: parent.verticalCenter
         leftPadding: 8
         width: Math.min(implicitWidth, Math.max(0, root.maxWidth - iconsBox.width - 8), 340)

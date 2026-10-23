@@ -62,9 +62,9 @@ GridLayout {
         visible: Power.hasWlsunset
         icon: "nightlight"
         title: "Night light"
-        subtitle: Power.nightLight ? Settings.nightLightTemp + "K" : "Off"
-        active: Power.nightLight
-        onToggled: Power.nightLight = !Power.nightLight
+        subtitle: !Settings.nightLight ? "Off" : Settings.nightLightMode === "scheduled" ? Settings.nightLightFrom + "–" + Settings.nightLightTo : Settings.nightLightTemp + "K"
+        active: Settings.nightLight
+        onToggled: Settings.nightLight = !Settings.nightLight
     }
     ToggleTile {
         Layout.fillWidth: true

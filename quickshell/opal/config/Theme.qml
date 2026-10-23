@@ -11,15 +11,26 @@ import qs.services
 Singleton {
     id: root
 
-    // ---- signature accents --------------------------------------------------
-    readonly property color sigPink: "#f472b6"
-    readonly property color sigViolet: "#a855f7"
-    readonly property color sigCyan: "#65c8ff"
+    // ---- accents ------------------------------------------------------------------
+    // Each preset is [start, middle, end] of the accent sweep. The property
+    // names stay pink/violet/cyan after the signature palette.
+    readonly property var presets: ({
+            opal: { name: "Opal", colors: ["#f472b6", "#a855f7", "#65c8ff"] },
+            sakura: { name: "Sakura", colors: ["#ffafcc", "#f472b6", "#ffd6a5"] },
+            ocean: { name: "Ocean", colors: ["#38bdf8", "#6366f1", "#2dd4bf"] },
+            aurora: { name: "Aurora", colors: ["#34d399", "#22d3ee", "#a78bfa"] },
+            sunset: { name: "Sunset", colors: ["#fb923c", "#f43f5e", "#facc15"] },
+            crimson: { name: "Crimson", colors: ["#f43f5e", "#be123c", "#fb7185"] },
+            mint: { name: "Mint", colors: ["#a7f3d0", "#5eead4", "#bae6fd"] },
+            mono: { name: "Mono", colors: ["#f4f4f5", "#a1a1aa", "#e4e4e7"] }
+        })
+    readonly property var presetOrder: ["opal", "sakura", "ocean", "aurora", "sunset", "crimson", "mint", "mono"]
+    readonly property var preset: (presets[Settings.accentPreset] ?? presets.opal).colors
 
     readonly property bool adaptive: Settings.adaptiveColors && adaptivePalette.length >= 3
-    property color pink: adaptive ? adaptivePalette[0] : sigPink
-    property color violet: adaptive ? adaptivePalette[1] : sigViolet
-    property color cyan: adaptive ? adaptivePalette[2] : sigCyan
+    property color pink: adaptive ? adaptivePalette[0] : preset[0]
+    property color violet: adaptive ? adaptivePalette[1] : preset[1]
+    property color cyan: adaptive ? adaptivePalette[2] : preset[2]
     readonly property color accent: Qt.tint(violet, Qt.rgba(pink.r, pink.g, pink.b, 0.35))
 
     Behavior on pink { ColorAnimation { duration: 600 } }
@@ -49,11 +60,12 @@ Singleton {
     readonly property string monoFont: "Hack Nerd Font Mono"
     readonly property string iconFont: "Material Symbols Rounded"
 
-    readonly property int fontXs: 10
-    readonly property int fontSm: 11
-    readonly property int fontMd: 13
-    readonly property int fontLg: 15
-    readonly property int fontXl: 20
+    readonly property real fontScale: Math.max(0.8, Math.min(1.4, Settings.fontScale))
+    readonly property int fontXs: Math.round(10 * fontScale)
+    readonly property int fontSm: Math.round(11 * fontScale)
+    readonly property int fontMd: Math.round(13 * fontScale)
+    readonly property int fontLg: Math.round(15 * fontScale)
+    readonly property int fontXl: Math.round(20 * fontScale)
 
     // ---- geometry -----------------------------------------------------------------
     readonly property int barHeight: 42
@@ -68,9 +80,13 @@ Singleton {
     readonly property int gap: 10
 
     // ---- motion ---------------------------------------------------------------------
-    readonly property int fast: 140
-    readonly property int normal: 240
-    readonly property int slow: 420
+    // `motion` is false with "Reduce motion": decorative loops stop and
+    // transitions become quick fades.
+    readonly property bool motion: !Settings.reduceMotion
+    readonly property real timeScale: motion ? 1 / Math.max(0.25, Settings.animationSpeed) : 0.4
+    readonly property int fast: Math.round(140 * timeScale)
+    readonly property int normal: Math.round(240 * timeScale)
+    readonly property int slow: Math.round(420 * timeScale)
     readonly property var emphasized: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
 
     // ---- helpers ----------------------------------------------------------------------

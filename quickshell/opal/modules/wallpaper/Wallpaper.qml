@@ -43,7 +43,7 @@ PanelWindow {
     component Layer: Image {
         id: img
         anchors.fill: parent
-        fillMode: Image.PreserveAspectCrop
+        fillMode: Settings.wallpaperFill === "fit" ? Image.PreserveAspectFit : Image.PreserveAspectCrop
         asynchronous: true
         cache: false
         smooth: true
@@ -66,8 +66,8 @@ PanelWindow {
 
         ParallelAnimation {
             id: fadeIn
-            NumberAnimation { target: img; property: "opacity"; from: 0; to: 1; duration: 900; easing.type: Easing.OutCubic }
-            NumberAnimation { target: img; property: "scale"; from: 1.06; to: 1.0; duration: 1600; easing.type: Easing.OutExpo }
+            NumberAnimation { target: img; property: "opacity"; from: 0; to: 1; duration: Math.max(1, Settings.wallpaperTransition); easing.type: Easing.OutCubic }
+            NumberAnimation { target: img; property: "scale"; from: Theme.motion ? 1.06 : 1.0; to: 1.0; duration: Math.max(1, Settings.wallpaperTransition * 1.8); easing.type: Easing.OutExpo }
             onFinished: {
                 const other = root.layers[1 - img.myIndex];
                 other.opacity = 0;

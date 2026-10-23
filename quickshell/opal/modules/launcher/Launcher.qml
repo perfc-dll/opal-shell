@@ -100,7 +100,7 @@ PanelSurface {
             return;
         }
         if (isWeb) {
-            Qt.openUrlExternally("https://duckduckgo.com/?q=" + encodeURIComponent(query.slice(1).trim()));
+            Qt.openUrlExternally(Apps.searchUrl(query.slice(1).trim()));
             Ui.close();
             return;
         }
@@ -278,7 +278,7 @@ PanelSurface {
                 }
                 StyledText {
                     width: parent.width
-                    text: root.isRun ? "Enter: run  ·  Shift+Enter: run in " + Settings.terminal : root.isWeb ? "Enter: search DuckDuckGo" : "Enter: copy result"
+                    text: root.isRun ? "Enter: run  ·  Shift+Enter: run in " + Settings.terminal : root.isWeb ? "Enter: search " + Apps.engineName : "Enter: copy result"
                     font.pixelSize: Theme.fontXs
                     color: Theme.subtext
                 }

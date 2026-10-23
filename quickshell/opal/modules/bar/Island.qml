@@ -13,7 +13,7 @@ Item {
     id: root
 
     readonly property bool osd: Ui.osdKind !== ""
-    readonly property bool media: Media.hasPlayer && (Media.playing || mediaLinger.running)
+    readonly property bool media: Settings.islandMedia && Media.hasPlayer && (Media.playing || mediaLinger.running)
     readonly property real targetWidth: osd ? 300 : clockRow.implicitWidth + (media ? mediaRow.implicitWidth + 14 : 0) + 28
 
     implicitWidth: targetWidth
@@ -22,6 +22,7 @@ Item {
     height: implicitHeight
 
     Behavior on implicitWidth {
+        enabled: Theme.motion
         SpringAnimation { spring: 4.2; damping: 0.32; epsilon: 0.4 }
     }
 
@@ -76,6 +77,7 @@ Item {
                     font.weight: 700
                 }
                 StyledText {
+                    visible: Settings.islandDate
                     anchors.verticalCenter: parent.verticalCenter
                     text: Qt.formatDateTime(clock.date, "ddd d MMM")
                     color: Theme.subtext
@@ -83,7 +85,7 @@ Item {
                     font.weight: 500
                 }
                 Row {
-                    visible: Weather.ready
+                    visible: Weather.ready && Settings.weatherEnabled && Settings.islandWeather
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 3
                     MaterialIcon {
@@ -143,7 +145,7 @@ Item {
                         from: 0; to: 360
                         duration: 9000
                         loops: Animation.Infinite
-                        running: Media.playing
+                        running: Media.playing && Theme.motion
                     }
                 }
 

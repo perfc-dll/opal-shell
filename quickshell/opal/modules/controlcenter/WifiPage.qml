@@ -8,15 +8,19 @@ Item {
     id: root
 
     property bool active: false
+    property bool showBack: true
     property string askingFor: ""
     signal back
 
     onActiveChanged: Net.scan(active)
+    Component.onCompleted: if (active) Net.scan(true)
+    Component.onDestruction: if (active) Net.scan(false)
 
     PageHeader {
         id: header
         width: parent.width
-        title: "Wi-Fi"
+        showBack: root.showBack
+        title: root.showBack ? "Wi-Fi" : "Networks"
         toggleOn: Net.wifiEnabled
         busy: Net.connecting !== ""
         onBack: root.back()

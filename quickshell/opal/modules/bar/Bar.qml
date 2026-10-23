@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.SystemTray
 import qs.config
 import qs.services
 import qs.widgets
@@ -42,10 +43,14 @@ PanelWindow {
             spacing: 6
 
             OpalOrb {}
-            Workspaces { screenName: bar.screen.name }
+            Workspaces {
+                screenName: bar.screen.name
+                visible: Settings.barWorkspaces && list.length > 0
+            }
             WindowStrip {
                 id: strip
                 screenName: bar.screen.name
+                visible: Settings.barWindows && windows.length > 0
                 maxWidth: Math.max(0, island.x - left.x - 160)
             }
         }
@@ -62,7 +67,10 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
 
-            TrayArea { barWindow: bar }
+            TrayArea {
+                barWindow: bar
+                visible: Settings.barTray && SystemTray.items.values.length > 0
+            }
             StatusCluster { screenName: bar.screen.name }
             IconButton {
                 icon: Settings.dnd ? "notifications_off" : "notifications"

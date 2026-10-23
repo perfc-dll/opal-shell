@@ -19,6 +19,7 @@ import qs.modules.notifications
 import qs.modules.wallpaper
 import qs.modules.session
 import qs.modules.visualizer
+import qs.modules.settings
 import qs.widgets
 
 ShellRoot {
@@ -55,6 +56,12 @@ ShellRoot {
     WallpaperPicker {}
     SessionMenu {}
 
+    // The settings app only exists while it's open.
+    LazyLoader {
+        active: Ui.settingsOpen
+        SettingsWindow {}
+    }
+
     // One-time hello with the important shortcuts.
     Timer {
         running: Settings.ready && !Settings.welcomed
@@ -86,6 +93,12 @@ ShellRoot {
                 Ui.close();
             else
                 Ui.openLauncher("clipboard");
+        }
+        function settings(): void {
+            Ui.toggleSettings();
+        }
+        function openSettings(page: string): void {
+            Ui.openSettings(page);
         }
         function bar(): void {
             Settings.barVisible = !Settings.barVisible;

@@ -8,14 +8,18 @@ Item {
     id: root
 
     property bool active: false
+    property bool showBack: true
     signal back
 
     onActiveChanged: Bt.scan(active)
+    Component.onCompleted: if (active) Bt.scan(true)
+    Component.onDestruction: if (active) Bt.scan(false)
 
     PageHeader {
         id: header
         width: parent.width
-        title: "Bluetooth"
+        showBack: root.showBack
+        title: root.showBack ? "Bluetooth" : "Devices"
         toggleOn: Bt.enabled
         busy: Bt.adapter?.discovering ?? false
         onBack: root.back()

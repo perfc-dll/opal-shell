@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
+import Quickshell.Wayland
 
 // Battery (UPower), ACPI platform profile (through an optional root helper +
 // scoped sudo rule, see extras/power-profile), caffeine, night light and
@@ -75,7 +76,7 @@ Singleton {
     property bool caffeine: false
 
     // ---- night light (wlsunset) -----------------------------------------------------
-    property bool nightLight: false
+    readonly property bool nightLight: Settings.nightLight
     property bool hasWlsunset: false
 
     Process {
@@ -87,9 +88,54 @@ Singleton {
     Process {
         id: sunset
         running: root.nightLight && root.hasWlsunset
-        // Day and night temperatures 1K apart = a constant warm tint all day.
-        command: ["wlsunset", "-T", String(Settings.nightLightTemp + 1), "-t", String(Settings.nightLightTemp), "-S", "06:00", "-s", "18:00", "-d", "60"]
+        // "always": day and night temperatures 1K apart = a constant warm tint.
+        // "scheduled": warm from nightLightFrom until nightLightTo, with a
+        // 30-minute fade either side.
+        command: Settings.nightLightMode === "scheduled"
+            ? ["wlsunset", "-T", "6500", "-t", String(Settings.nightLightTemp), "-s", Settings.nightLightFrom, "-S", Settings.nightLightTo, "-d", "1800"]
+            : ["wlsunset", "-T", String(Settings.nightLightTemp + 1), "-t", String(Settings.nightLightTemp), "-S", "06:00", "-s", "18:00", "-d", "60"]
+        // restart with the new arguments when a setting changes
+        onCommandChanged: if (running) {
+            running = false;
+            running = Qt.binding(() => root.nightLight && root.hasWlsunset);
+        }
     }
+
+    // ---- idle (ext-idle-notify; caffeine and video players' inhibitors count) -------
+    IdleMonitor {
+        enabled: Settings.idleLockMinutes > 0
+        timeout: Settings.idleLockMinutes * 60
+        respectInhibitors: true
+        onIsIdleChanged: if (isIdle) root.lock()
+    }
+    IdleMonitor {
+        enabled: Settings.idleScreenOffMinutes > 0
+        timeout: Settings.idleScreenOffMinutes * 60
+        respectInhibitors: true
+        onIsIdleChanged: if (isIdle) Niri.powerOffMonitors()
+    }
+    IdleMonitor {
+        enabled: Settings.idleSuspendMinutes > 0
+        timeout: Settings.idleSuspendMinutes * 60
+        respectInhibitors: true
+        onIsIdleChanged: if (isIdle) root.suspend()
+    }
+
+    // ---- low battery warning -----------------------------------------------------------
+    property bool _warned: false
+    function checkBattery() {
+        const t = Settings.lowBatteryWarn / 100;
+        if (!hasBattery || t <= 0)
+            return;
+        if (charging || pluggedIn || percent > t + 0.05) {
+            _warned = false;
+        } else if (percent <= t && !_warned) {
+            _warned = true;
+            Quickshell.execDetached(["notify-send", "-u", "critical", "-a", "Battery", "-i", "battery-caution", "Battery low", Math.round(percent * 100) + "% left" + (timeText ? "  ·  " + timeText : "")]);
+        }
+    }
+    onPercentChanged: checkBattery()
+    onChargingChanged: checkBattery()
 
     // ---- session ------------------------------------------------------------------------
     function lock() {

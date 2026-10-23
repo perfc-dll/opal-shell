@@ -14,8 +14,8 @@ Singleton {
     property var history: []
     property int unread: 0
     property var toastHeights: ({})
-    readonly property int maxToasts: 4
-    readonly property int maxHistory: 60
+    readonly property int maxToasts: Math.max(1, Settings.maxToasts)
+    readonly property int maxHistory: Math.max(10, Settings.historyLimit)
     readonly property bool dnd: Settings.dnd
 
     property int _seq: 0
@@ -120,7 +120,7 @@ Singleton {
                 image: n.image || "",
                 urgency: n.urgency,
                 time: Date.now(),
-                timeout: n.urgency === NotificationUrgency.Critical ? 0 : (n.expireTimeout > 0 ? (n.expireTimeout > 100 ? n.expireTimeout : n.expireTimeout * 1000) : 6000)
+                timeout: n.urgency === NotificationUrgency.Critical ? 0 : (n.expireTimeout > 0 ? (n.expireTimeout > 100 ? n.expireTimeout : n.expireTimeout * 1000) : Settings.toastSeconds * 1000)
             };
 
             n.closed.connect(() => {

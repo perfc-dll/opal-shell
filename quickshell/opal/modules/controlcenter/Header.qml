@@ -33,7 +33,7 @@ Item {
             GradientStop { position: 1; color: Theme.cyan }
         }
         RotationAnimation on rotation {
-            from: 0; to: 360; duration: 12000; loops: Animation.Infinite; running: Ui.panel === "control"
+            from: 0; to: 360; duration: 12000; loops: Animation.Infinite; running: Ui.panel === "control" && Theme.motion
         }
 
         ClippingRectangle {
@@ -89,6 +89,10 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 2
 
+        IconButton {
+            icon: "settings"
+            onClicked: Ui.openSettings("")
+        }
         IconButton {
             icon: "wallpaper"
             onClicked: Ui.open("wallpaper")

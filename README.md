@@ -38,6 +38,7 @@ separate **"Niri (Opal)"** login session next to your normal niri session.
 | **Edge visualizer** | Music-reactive bars along the screen edges, under your windows. Click-through, and gone after a second of silence. |
 | **Power menu** | Full-screen frosted menu. Log out, reboot and power off give you a 3-second countdown. |
 | **Adaptive colour** | Optionally takes the accent colours from the wallpaper instead of the pink → violet → cyan signature palette. |
+| **Settings app** | `Super+I`: a floating glass window with 12 pages. Pick from 8 accent presets or adaptive colour, set glass tint, text size, animation speed or reduce motion, choose what the bar and island show, set up wallpaper fit, transitions and a slideshow, notification timing, audio devices, Wi-Fi, Bluetooth, idle lock / screen-off / suspend, scheduled night light, low-battery warning and the search engine. Includes a keybind cheat sheet. Changes apply live. |
 
 <table>
   <tr>
@@ -51,6 +52,9 @@ separate **"Niri (Opal)"** login session next to your normal niri session.
   <tr>
     <td><img src="docs/screenshots/06-power.jpg" alt="Power menu"></td>
     <td><img src="docs/screenshots/07-adaptive.jpg" alt="Adaptive colours"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/08-settings.jpg" alt="Settings app"></td>
   </tr>
 </table>
 
@@ -96,6 +100,7 @@ session and `~/.config/niri/config.kdl` are not touched.
 | `Super+V` | Clipboard history |
 | `Super+A` | Control centre |
 | `Super+N` | Dashboard / notifications |
+| `Super+I` | Settings |
 | `Super+W` / `Super+Shift+W` | Wallpaper picker / random wallpaper |
 | `Super+Shift+B` | Show / hide the bar |
 | `Super+Shift+E` | Power menu (`Super+Ctrl+Shift+E` = niri's own quit) |
@@ -105,19 +110,11 @@ session and `~/.config/niri/config.kdl` are not touched.
 
 ## Settings
 
-Opal keeps its settings in `~/.local/state/opal/settings.json`. The UI writes
-the file, and hand edits apply live.
-
-| Key | Meaning |
-|---|---|
-| `displayName` | How the shell greets you; empty uses your system name |
-| `weatherLocation` | City for [wttr.in](https://wttr.in); empty auto-detects from your IP |
-| `useFahrenheit`, `use24h` | Units and clock format |
-| `glassOpacity` | Glass tint strength (0.3 to 0.7 looks good) |
-| `wallpaperDir` | Folder the picker shows (default `~/Pictures/wallpapers`) |
-| `edgeVisualizer`, `adaptiveColors`, `dnd` | The toggles from the control centre |
-| `nightLightTemp` | Night-light colour temperature in kelvin |
-| `terminal` | Used for "run in terminal" from the launcher |
+Open the settings app with `Super+I`, the gear in the control centre, or by
+typing "settings" in the launcher. Everything is stored in
+`~/.local/state/opal/settings.json` (or `$OPAL_STATE_DIR/settings.json`), and
+hand edits apply live too. *About → Reset to defaults* puts everything back
+except your wallpaper, name and app ranking.
 
 Everything can also be driven from the command line, and the niri binds use these commands:
 

@@ -91,6 +91,14 @@ Singleton {
         onCountChanged: thumbDebounce.restart()
     }
 
+    // Slideshow: a new random wallpaper every N minutes (0 = off).
+    Timer {
+        interval: Math.max(1, Settings.slideshowMinutes) * 60000
+        running: Settings.slideshowMinutes > 0
+        repeat: true
+        onTriggered: root.random()
+    }
+
     Timer {
         id: thumbDebounce
         interval: 1500

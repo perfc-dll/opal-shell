@@ -7,7 +7,40 @@ import Quickshell
 Singleton {
     id: root
 
-    readonly property var all: DesktopEntries.applications.values.filter(a => !a.noDisplay).sort((a, b) => a.name.localeCompare(b.name))
+    // Built-in entries that aren't .desktop files.
+    readonly property var builtins: [
+        {
+            internal: true,
+            id: "opal-settings",
+            name: "Opal Settings",
+            genericName: "Settings",
+            comment: "Appearance, bar, wallpaper, notifications, power and more",
+            icon: "preferences-system",
+            keywords: ["settings", "preferences", "config", "opal", "control", "theme"],
+            runInTerminal: false,
+            command: [],
+            run: () => Ui.openSettings("")
+        }
+    ]
+    readonly property var all: [...builtins, ...DesktopEntries.applications.values.filter(a => !a.noDisplay)].sort((a, b) => a.name.localeCompare(b.name))
+
+    readonly property var engines: ({
+            duckduckgo: { name: "DuckDuckGo", url: "https://duckduckgo.com/?q=" },
+            google: { name: "Google", url: "https://www.google.com/search?q=" },
+            brave: { name: "Brave Search", url: "https://search.brave.com/search?q=" },
+            startpage: { name: "Startpage", url: "https://www.startpage.com/do/search?query=" },
+            kagi: { name: "Kagi", url: "https://kagi.com/search?q=" }
+        })
+    readonly property var engine: engines[Settings.searchEngine] ?? engines.duckduckgo
+    readonly property string engineName: engine.name
+
+    function searchUrl(q) {
+        return engine.url + encodeURIComponent(q);
+    }
+
+    function resetCounts() {
+        Settings.launchCounts = {};
+    }
 
     function score(app, q) {
         const name = app.name.toLowerCase();
@@ -54,7 +87,9 @@ Singleton {
         const counts = Object.assign({}, Settings.launchCounts);
         counts[app.id] = (counts[app.id] ?? 0) + 1;
         Settings.launchCounts = counts;
-        if (app.runInTerminal)
+        if (app.internal)
+            app.run();
+        else if (app.runInTerminal)
             Quickshell.execDetached([Settings.terminal, "-e", ...app.command]);
         else
             app.execute();

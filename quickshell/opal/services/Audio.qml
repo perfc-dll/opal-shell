@@ -19,6 +19,20 @@ Singleton {
     readonly property string sinkName: sink?.description || sink?.nickname || sink?.name || "No output"
     readonly property string sourceName: source?.description || source?.nickname || source?.name || "No input"
 
+    // hardware outputs / inputs (not app streams)
+    readonly property var sinks: Pipewire.nodes.values.filter(n => n.type === PwNodeType.AudioSink)
+    readonly property var sources: Pipewire.nodes.values.filter(n => n.type === PwNodeType.AudioSource)
+
+    function nodeName(n) {
+        return n?.description || n?.nickname || n?.name || "Unknown device";
+    }
+    function setSink(n) {
+        Pipewire.preferredDefaultAudioSink = n;
+    }
+    function setSource(n) {
+        Pipewire.preferredDefaultAudioSource = n;
+    }
+
     readonly property string icon: muted || volume <= 0.001 ? "volume_off" : volume < 0.34 ? "volume_mute" : volume < 0.67 ? "volume_down" : "volume_up"
     readonly property string micIcon: micMuted ? "mic_off" : "mic"
 

@@ -64,7 +64,7 @@ Item {
             loops: Animation.Infinite
             // Only while you're looking at it: a permanent animation would
             // keep the whole bar redrawing (and niri re-blurring it) at 60fps.
-            running: hover.hovered || Ui.panel === "launcher"
+            running: Theme.motion && (hover.hovered || Ui.panel === "launcher")
         }
     }
 

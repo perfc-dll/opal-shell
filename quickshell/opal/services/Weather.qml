@@ -96,9 +96,21 @@ Singleton {
         }
     }
 
+    // refetch soon after the location or the on/off switch changes
+    Timer {
+        id: changed
+        interval: 1500
+        onTriggered: if (Settings.weatherEnabled) root.refresh()
+    }
+    Connections {
+        target: Settings
+        function onWeatherLocationChanged() { changed.restart(); }
+        function onWeatherEnabledChanged() { changed.restart(); }
+    }
+
     Timer {
         interval: 20 * 60 * 1000
-        running: true
+        running: Settings.weatherEnabled
         repeat: true
         triggeredOnStart: true
         onTriggered: root.refresh()
