@@ -1,0 +1,583 @@
+// ============================================================
+// niri config — "Opal" session
+// Shell: Quickshell config ~/.config/quickshell/opal (bar, island,
+// control centre, launcher, notifications, wallpaper, power menu)
+// Kept: kitty + hyprlock + swayidle + xfce-polkit, and all of the
+// window rules / shaders from the regular config.kdl.
+//
+// This file is only used by the "Niri (Opal)" login session;
+// ~/.config/niri/config.kdl (waybar session) is untouched.
+// ============================================================
+
+cursor {
+    xcursor-theme "Nordic-cursors"
+    xcursor-size 24
+}
+
+input {
+    keyboard {
+        xkb {
+            layout "us"
+        }
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+        dwt              // disable-while-typing
+        accel-speed 0.2
+    }
+
+    warp-mouse-to-focus
+    focus-follows-mouse max-scroll-amount="0%"
+}
+
+output "eDP-1" {
+    // confirm your exact output name with: niri msg outputs
+    scale 1.0
+}
+
+// ------------------------------------------------------------
+// Layout — pure horizontal strip, no numbered workspaces used.
+// Everything lives on one scrollable row; you navigate by
+// column, not by workspace number.
+// ------------------------------------------------------------
+layout {
+    gaps 8
+
+    // Opal draws the wallpaper into the backdrop (see the opal-wallpaper
+    // layer rule); transparent workspaces let it show through, and it
+    // stays put behind the overview zoom.
+    background-color "transparent"
+
+    center-focused-column "never"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    default-column-width { proportion 0.5; }
+
+    // No ring/line for focus — just the colored glow from the
+    // shadow window-rule below.
+    focus-ring {
+        off
+    }
+
+    border {
+        width 1
+
+        active-gradient from="#c065d1" to="#65c8ff" angle=45 relative-to="workspace-view"
+        inactive-gradient from="#3a3a3a" to="#555555" angle=45 relative-to="workspace-view"
+    }
+
+    struts {
+        left 0
+        right 0
+        top 0
+        bottom 0
+    }
+}
+
+// Slightly rounded corners on all windows.
+window-rule {
+    geometry-corner-radius 8
+    clip-to-geometry true
+}
+
+// ------------------------------------------------------------
+// "Liquid glass" kitty: bigger rounded corners, richer frosted
+// blur, a soft floating shadow, and a subtle glass-rim border
+// that lights up on focus.
+// ------------------------------------------------------------
+window-rule {
+    match app-id="^kitty$"
+
+    geometry-corner-radius 8
+
+    background-effect {
+        xray false
+        blur true
+        saturation 1.1
+        noise 0.04
+
+    }
+
+   // opacity 0.99999
+
+    shadow {
+        on
+        softness 40
+        spread -3
+        offset x=0 y=8
+        color "#00000060"
+        inactive-color "#00000030"
+    }
+
+    // Glass-rim border: bright highlight where light would catch the
+    // top-left edge of a curved glass pane, fading to near-nothing at
+    // the bottom-right — reads as a refractive edge instead of a flat
+    // outline.
+    border {
+        on
+        width 1
+        active-gradient from="#ffffffb0" to="#ffffff00" angle=135 relative-to="window"
+        inactive-gradient from="#ffffff50" to="#ffffff00" angle=135 relative-to="window"
+    }
+}
+
+window-rule {
+    match app-id="^kate$"
+
+    geometry-corner-radius 16
+
+    background-effect {
+        xray false
+        blur true
+        saturation 1.8
+        noise 0.06
+
+    }
+
+   // opacity 0.99999
+
+    shadow {
+        on
+        softness 40
+        spread -3
+        offset x=0 y=8
+        color "#00000060"
+        inactive-color "#00000030"
+    }
+
+    // Glass-rim border: bright highlight where light would catch the
+    // top-left edge of a curved glass pane, fading to near-nothing at
+    // the bottom-right — reads as a refractive edge instead of a flat
+    // outline.
+    border {
+        on
+        width 0.01
+        active-gradient from="#ffffffb0" to="#ffffff00" angle=135 relative-to="window"
+        inactive-gradient from="#ffffff50" to="#ffffff00" angle=135 relative-to="window"
+    }
+}
+
+
+
+
+
+window-rule {
+    match app-id="^librewolf$"
+
+   // opacity 0.30
+
+    background-effect{
+	xray false
+	blur true
+	saturation 1.8
+	noise 0.06
+
+}
+
+
+  shadow {
+        on
+        softness 40
+        spread -3
+        offset x=0 y=8
+        color "#00000060"
+        inactive-color "#00000030"
+    }
+
+
+    // ... configuration options
+}
+
+
+
+// waypaper: same liquid-glass treatment as kitty. Its own stylesheet
+// (~/.config/waypaper/style.css) paints the translucent plum glass;
+// this rule supplies the blur, radius and glass rim behind it.
+window-rule {
+    match app-id="^waypaper$"
+
+    // Wide enough for the 4-column thumbnail grid (4 x ~252px) with no
+    // horizontal scrollbar.
+    default-column-width { fixed 1040; }
+
+    geometry-corner-radius 16
+
+    background-effect {
+        xray false
+        blur true
+        saturation 1.8
+        noise 0.06
+    }
+
+    shadow {
+        on
+        softness 40
+        spread -3
+        offset x=0 y=8
+        color "#00000060"
+        inactive-color "#00000030"
+    }
+
+    border {
+        on
+        width 0.2
+        active-gradient from="#ffffffb0" to="#ffffff00" angle=135 relative-to="window"
+        inactive-gradient from="#ffffff50" to="#ffffff00" angle=135 relative-to="window"
+    }
+}
+
+// Soft purple/pink glow on the active window — no border line,
+// just a blurred halo (niri shadows can't gradient, so this
+// uses a single color midway between the two accents).
+window-rule {
+    match is-active=true
+
+    shadow {
+        on
+        softness 45
+        spread -8
+        offset x=0 y=0
+        color "#c065d180"
+    }
+}
+
+// ------------------------------------------------------------
+// Opal layer surfaces. Each glass element is its own layer surface
+// whose shape is exactly the glass pane, so niri's blur + rounded
+// corners + glow line up with what Quickshell draws.
+// ------------------------------------------------------------
+layer-rule {
+    match namespace="^opal-bar$"
+
+    geometry-corner-radius 16
+
+    // Windows never sit under the bar (exclusive zone), so xray —
+    // blurred wallpaper, computed once — looks the same and is cheaper.
+    background-effect {
+        blur true
+        xray true
+        saturation 1.6
+        noise 0.04
+    }
+
+    shadow {
+        on
+        softness 30
+        spread -6
+        offset x=0 y=6
+        color "#00000055"
+    }
+}
+
+layer-rule {
+    match namespace="^opal-(control|dashboard)$"
+
+    geometry-corner-radius 24
+
+    background-effect {
+        blur true
+        xray false
+        saturation 1.8
+        noise 0.05
+    }
+
+    shadow {
+        on
+        softness 45
+        spread -6
+        offset x=0 y=10
+        color "#c065d150"
+    }
+}
+
+layer-rule {
+    match namespace="^opal-(launcher|wallpaper)$"
+
+    geometry-corner-radius 26
+
+    background-effect {
+        blur true
+        xray false
+        saturation 2.0
+        noise 0.05
+    }
+
+    shadow {
+        on
+        softness 50
+        spread -6
+        offset x=0 y=12
+        color "#c065d160"
+    }
+}
+
+layer-rule {
+    match namespace="^opal-toast$"
+
+    geometry-corner-radius 18
+    block-out-from "screencast"
+
+    background-effect {
+        blur true
+        xray false
+        saturation 2.1
+        noise 0.06
+    }
+
+    shadow {
+        on
+        softness 40
+        spread -3
+        offset x=0 y=8
+        color "#00000060"
+    }
+}
+
+// Power menu: frost the whole screen.
+layer-rule {
+    match namespace="^opal-session$"
+
+    background-effect {
+        blur true
+        xray false
+        saturation 1.3
+        noise 0.03
+    }
+}
+
+// The shell draws the wallpaper; keep it visible behind the overview.
+layer-rule {
+    match namespace="^opal-wallpaper$"
+    place-within-backdrop true
+}
+
+blur {
+    passes 2
+    offset 3.0
+    noise 0.04
+    saturation 1.2
+}
+
+animations {
+    slowdown 0.7
+
+    // "Liquid glass" open: the window ripples outward from center like
+    // a droplet settling, while scaling/fading in. Wave amplitude decays
+    // as the animation finishes so it settles flat, not jelly-forever.
+    window-open {
+        duration-ms 220
+        curve "linear"
+
+        custom-shader r"
+            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+                float p = niri_clamped_progress;
+
+                vec2 center = vec2(0.5);
+                vec2 d = coords_geo.xy - center;
+                float dist = length(d * size_geo.xy);
+
+                float decay = (1.0 - p) * (1.0 - p);
+                float wave = sin(dist * 0.15 - p * 20.0) * decay * 0.025;
+                vec2 dir = d / (length(d) + 0.0001);
+                vec2 rippled = coords_geo.xy + dir * wave;
+
+                float scale = mix(0.9, 1.0, p);
+                vec2 scaled = (rippled - center) / scale + center;
+
+                vec4 color = vec4(0.0);
+                if (0.0 <= scaled.x && scaled.x <= 1.0
+                        && 0.0 <= scaled.y && scaled.y <= 1.0)
+                {
+                    vec3 coords_tex = niri_geo_to_tex * vec3(scaled, 1.0);
+                    color = texture2D(niri_tex, coords_tex.st);
+                }
+
+                return color * p;
+            }
+        "
+    }
+
+    // Mirror of window-open: the ripple drains inward as the window
+    // fades, like glass dissolving rather than a flat cut.
+    window-close {
+        duration-ms 260
+        curve "linear"
+
+        custom-shader r"
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                float p = 1.0 - niri_clamped_progress;
+
+                vec2 center = vec2(0.5);
+                vec2 d = coords_geo.xy - center;
+                float dist = length(d * size_geo.xy);
+
+                float decay = (1.0 - p) * (1.0 - p);
+                float wave = sin(dist * 0.15 - p * 20.0) * decay * 0.025;
+                vec2 dir = d / (length(d) + 0.0001);
+                vec2 rippled = coords_geo.xy + dir * wave;
+
+                float scale = mix(0.9, 1.0, p);
+                vec2 scaled = (rippled - center) / scale + center;
+
+                vec4 color = vec4(0.0);
+                if (0.0 <= scaled.x && scaled.x <= 1.0
+                        && 0.0 <= scaled.y && scaled.y <= 1.0)
+                {
+                    vec3 coords_tex = niri_geo_to_tex * vec3(scaled, 1.0);
+                    color = texture2D(niri_tex, coords_tex.st);
+                }
+
+                return color * p;
+            }
+        "
+    }
+
+    // Jelly-wobble resize: a horizontal bend that oscillates with the
+    // underdamped spring below, settling flat once the resize ends.
+    window-resize {
+        spring damping-ratio=0.6 stiffness=600 epsilon=0.0005
+
+        custom-shader r"
+            vec4 resize_color(vec3 coords_curr_geo, vec3 size_curr_geo) {
+                vec2 d = coords_curr_geo.xy - vec2(0.5);
+                float settle = 1.0 - niri_clamped_progress;
+                float bend = sin(d.y * 10.0 + niri_progress * 6.0) * settle * 0.03;
+
+                vec2 coords = vec2(coords_curr_geo.x + bend, coords_curr_geo.y);
+                vec3 coords_tex_next = niri_geo_to_tex_next * vec3(coords, 1.0);
+                return texture2D(niri_tex_next, coords_tex_next.st);
+            }
+        "
+    }
+
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+
+    workspace-switch {
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    }
+}
+
+gestures {
+    hot-corners {
+        top-left
+    }
+}
+
+prefer-no-csd
+
+screenshot-path "~/Pictures/Screenshots/screenshot-%Y-%m-%d-%H-%M-%S.png"
+
+// ------------------------------------------------------------
+// Startup — the Opal shell runs as a systemd user unit so it
+// restarts itself if it ever crashes (Mod+Ctrl+R restarts it too).
+// It draws the wallpaper, so no swaybg/waypaper here.
+// ------------------------------------------------------------
+spawn-at-startup "systemctl" "--user" "start" "opal-shell.service"
+spawn-at-startup "/usr/libexec/xfce-polkit"
+spawn-at-startup "swayidle" "-w" "before-sleep" "pidof hyprlock || hyprlock"
+// clipboard history for the launcher's clipboard tab (Mod+V)
+spawn-sh-at-startup "command -v cliphist >/dev/null && exec wl-paste --watch cliphist store"
+spawn-sh-at-startup "command -v cliphist >/dev/null && exec wl-paste --type image --watch cliphist store"
+
+// Skip niri's hotkey popup at login (Mod+Shift+/ still shows it).
+hotkey-overlay {
+    skip-at-startup
+}
+
+// ------------------------------------------------------------
+// Binds — both arrow-key and vim-style (H/J/K/L) do the same
+// actions. No numbered-workspace binds, since you're using the
+// horizontal strip as your only navigation model.
+// ------------------------------------------------------------
+binds {
+    Mod+Return { spawn "kitty"; }
+    Mod+D hotkey-overlay-title="Opal: launcher (apps, = math, > cmd, ? web)" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "launcher"; }
+    Mod+Space hotkey-overlay-title=null { spawn "qs" "-c" "opal" "ipc" "call" "shell" "launcher"; }
+    Mod+V hotkey-overlay-title="Opal: clipboard history" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "clipboard"; }
+    Mod+A hotkey-overlay-title="Opal: control centre" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "control"; }
+    Mod+N hotkey-overlay-title="Opal: dashboard & notifications" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "dashboard"; }
+    Mod+W hotkey-overlay-title="Opal: wallpapers" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "wallpaper"; }
+    Mod+Shift+W hotkey-overlay-title="Opal: random wallpaper" { spawn "qs" "-c" "opal" "ipc" "call" "wallpaper" "random"; }
+    Mod+Shift+B hotkey-overlay-title="Opal: show/hide bar" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "bar"; }
+    Mod+Ctrl+R hotkey-overlay-title="Opal: restart shell" { spawn "systemctl" "--user" "restart" "opal-shell.service"; }
+    Mod+O { toggle-overview; }
+    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Q { close-window; }
+    Mod+T { spawn "kitty"; }
+    Mod+B { spawn "brave-browser"; }
+    Mod+E { spawn "pcmanfm"; }
+    Mod+Z { spawn "kate"; }
+    //Mod+
+
+    // Arrow keys
+    Mod+Left  { focus-column-left; }
+    Mod+Right { focus-column-right; }
+    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-window-down; }
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Down  { move-window-down; }
+
+    // Vim-style — identical actions
+   // Mod+H { focus-column-left; }
+   // Mod+L { focus-column-right; }
+   // Mod+K { focus-window-up; }
+   // Mod+J { focus-window-down; }
+   // Mod+Shift+H { move-column-left; }
+   // Mod+Shift+L { move-column-right; }
+   // Mod+Shift+K { move-window-up; }
+   // Mod+Shift+J { move-window-down; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    // Stacking — pull the neighboring column's focused window into
+    // the current column (stacked vertically), or kick it back out.
+    Mod+Comma  { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+    // Tabbed display: stacked windows show full-height, one at a
+    // time, like i3's "stacking" containers.
+    Mod+Ctrl+W { toggle-column-tabbed-display; }
+
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+C { center-column; }
+
+    Mod+Shift+E hotkey-overlay-title="Opal: power menu" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "session"; }
+    Mod+Ctrl+Shift+E { quit; }
+    Mod+Shift+P { spawn "systemctl" "suspend"; }
+    Mod+Escape { spawn "hyprlock"; }
+
+    Print { screenshot; }
+    Mod+Print { screenshot-screen; }
+
+    XF86AudioRaiseVolume  { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+    XF86AudioLowerVolume  { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+    XF86AudioMute         { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute      { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    XF86AudioPlay         { spawn "playerctl" "play-pause"; }
+    XF86AudioPause        { spawn "playerctl" "play-pause"; }
+    XF86AudioNext         { spawn "playerctl" "next"; }
+    XF86AudioPrev         { spawn "playerctl" "previous"; }
+    XF86MonBrightnessUp   { spawn-sh "brightnessctl -q set 5%+; qs -c opal ipc call brightness refresh"; }
+    XF86MonBrightnessDown { spawn-sh "brightnessctl -q -n 5% set 5%-; qs -c opal ipc call brightness refresh"; }
+}
+
+window-rule {
+    match app-id=r#"^xfce-polkit$"#
+    block-out-from "screen-capture"
+}

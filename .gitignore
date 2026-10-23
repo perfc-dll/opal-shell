@@ -1,0 +1,10 @@
+# Quickshell / qmlls
+.qmlls.ini
+
+# editors
+*.swp
+.vscode/
+.idea/
+
+# Python
+__pycache__/

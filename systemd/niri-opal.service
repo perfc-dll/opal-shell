@@ -1,0 +1,16 @@
+# niri for the "Niri (Opal)" login session — same as /usr/lib/systemd/user/niri.service
+# but pointed at ~/.config/niri/opal.kdl. Started by ~/.local/bin/niri-opal-session.
+[Unit]
+Description=niri compositor (Opal shell session)
+BindsTo=graphical-session.target
+Before=graphical-session.target
+Wants=graphical-session-pre.target
+After=graphical-session-pre.target
+
+Wants=xdg-desktop-autostart.target
+Before=xdg-desktop-autostart.target
+
+[Service]
+Slice=session.slice
+Type=notify
+ExecStart=/usr/bin/niri --session -c %h/.config/niri/opal.kdl

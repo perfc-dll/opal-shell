@@ -1,0 +1,17 @@
+# The Opal Quickshell desktop shell. Started from ~/.config/niri/opal.kdl,
+# only ever runs inside the Opal session, restarts itself on a crash.
+[Unit]
+Description=Opal shell (Quickshell) for niri
+PartOf=graphical-session.target
+After=graphical-session.target niri-opal.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Slice=session.slice
+ExecCondition=/bin/sh -c 'systemctl --user -q is-active niri-opal.service'
+ExecStartPre=/usr/bin/mkdir -p %h/.local/state/opal %h/.cache/opal/thumbs
+ExecStart=/usr/bin/qs -c opal --no-duplicate
+Restart=on-failure
+RestartSec=2

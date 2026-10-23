@@ -1,0 +1,10 @@
+#!/bin/sh
+# Root-owned helper: writes /sys/firmware/acpi/platform_profile.
+# Only accepts a fixed set of known values, so a NOPASSWD sudo rule can safely
+# allow exactly these three invocations (no arbitrary strings reach the shell).
+set -eu
+case "$1" in
+    performance|balanced|low-power) : ;;
+    *) echo "invalid profile: $1" >&2; exit 1 ;;
+esac
+echo "$1" > /sys/firmware/acpi/platform_profile

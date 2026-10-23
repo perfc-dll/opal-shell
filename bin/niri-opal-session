@@ -1,0 +1,26 @@
+#!/bin/sh
+# Login-session entry point for "Niri (Opal)" — a copy of /usr/bin/niri-session
+# that starts niri-opal.service (niri + ~/.config/niri/opal.kdl) instead of
+# niri.service. The regular "Niri" session is not affected.
+
+# Re-exec through a login shell so ~/.bash_profile etc. are applied (as niri-session does).
+if [ -n "$SHELL" ] && grep -q "$SHELL" /etc/shells && [ "$1" != "-l" ]; then
+    exec bash -c "exec -l '$SHELL' -c '$0 -l'"
+fi
+[ "$1" = "-l" ] && shift
+
+if systemctl --user -q is-active niri.service || systemctl --user -q is-active niri-opal.service; then
+    echo 'A niri session is already running.'
+    exit 1
+fi
+
+systemctl --user reset-failed
+systemctl --user import-environment
+if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+    dbus-update-activation-environment --all
+fi
+
+systemctl --user --wait start niri-opal.service
+
+systemctl --user start --job-mode=replace-irreversibly niri-shutdown.target
+systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP NIRI_SOCKET
