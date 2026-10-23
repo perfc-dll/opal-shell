@@ -20,13 +20,14 @@ import qs.modules.wallpaper
 import qs.modules.session
 import qs.modules.visualizer
 import qs.modules.settings
+import qs.modules.lock
 import qs.widgets
 
 ShellRoot {
     id: shell
 
     // Touch the always-on services so they start with the shell.
-    readonly property var _services: [Notifs, Niri, Audio, Brightness, Power, Wallpapers, Weather]
+    readonly property var _services: [Notifs, Niri, Audio, Brightness, Power, Wallpapers, Weather, Lock]
 
     Variants {
         model: Quickshell.screens
@@ -55,6 +56,9 @@ ShellRoot {
     Launcher {}
     WallpaperPicker {}
     SessionMenu {}
+
+    LockScreen {}
+    LockPreview {}
 
     // The settings app only exists while it's open.
     LazyLoader {
@@ -111,6 +115,22 @@ ShellRoot {
         }
         function reload(): void {
             Quickshell.reload(true);
+        }
+    }
+
+    // Locking only: there is deliberately no way to unlock over IPC.
+    IpcHandler {
+        target: "lock"
+
+        function lock(): void {
+            Lock.lock();
+        }
+        // true once niri has confirmed the lock (what opal-lock waits for)
+        function isLocked(): bool {
+            return Lock.locked && Lock.secure;
+        }
+        function preview(): void {
+            Lock.preview();
         }
     }
 

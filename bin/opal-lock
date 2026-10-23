@@ -1,0 +1,14 @@
+#!/bin/sh
+# Lock the session with Opal's lock screen and return once niri has confirmed
+# the lock, so it is safe to use right before suspend. If the shell isn't
+# running, fall back to hyprlock.
+if qs -c opal ipc call lock lock >/dev/null 2>&1; then
+    i=0
+    while [ "$i" -lt 60 ]; do
+        [ "$(qs -c opal ipc call lock isLocked 2>/dev/null)" = "true" ] && exit 0
+        sleep 0.05
+        i=$((i + 1))
+    done
+    exit 0
+fi
+pidof hyprlock >/dev/null 2>&1 || exec hyprlock

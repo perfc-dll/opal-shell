@@ -2,7 +2,7 @@
 // niri config — "Opal" session
 // Shell: Quickshell config ~/.config/quickshell/opal (bar, island,
 // control centre, launcher, notifications, wallpaper, power menu)
-// Kept: kitty + hyprlock + swayidle + xfce-polkit, and all of the
+// Kept: kitty + swayidle + xfce-polkit (hyprlock as a fallback), and all of the
 // window rules / shaders from the regular config.kdl.
 //
 // This file is only used by the "Niri (Opal)" login session;
@@ -483,7 +483,9 @@ screenshot-path "~/Pictures/Screenshots/screenshot-%Y-%m-%d-%H-%M-%S.png"
 // ------------------------------------------------------------
 spawn-at-startup "systemctl" "--user" "start" "opal-shell.service"
 spawn-at-startup "/usr/libexec/xfce-polkit"
-spawn-at-startup "swayidle" "-w" "before-sleep" "pidof hyprlock || hyprlock"
+// Lock before suspend and on `loginctl lock-session`. opal-lock waits for
+// niri to confirm the lock, and falls back to hyprlock if the shell is down.
+spawn-sh-at-startup "swayidle -w before-sleep \"$HOME/.local/bin/opal-lock\" lock \"$HOME/.local/bin/opal-lock\""
 // clipboard history for the launcher's clipboard tab (Mod+V)
 spawn-sh-at-startup "command -v cliphist >/dev/null && exec wl-paste --watch cliphist store"
 spawn-sh-at-startup "command -v cliphist >/dev/null && exec wl-paste --type image --watch cliphist store"
@@ -561,7 +563,8 @@ binds {
     Mod+Shift+E hotkey-overlay-title="Opal: power menu" { spawn "qs" "-c" "opal" "ipc" "call" "shell" "toggle" "session"; }
     Mod+Ctrl+Shift+E { quit; }
     Mod+Shift+P { spawn "systemctl" "suspend"; }
-    Mod+Escape { spawn "hyprlock"; }
+    Mod+Escape hotkey-overlay-title="Opal: lock" { spawn-sh "$HOME/.local/bin/opal-lock"; }
+    Mod+Ctrl+Escape hotkey-overlay-title="Lock with hyprlock (fallback)" { spawn "hyprlock"; }
 
     Print { screenshot; }
     Mod+Print { screenshot-screen; }

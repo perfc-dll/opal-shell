@@ -52,6 +52,56 @@ SettingsPage {
 
     SettingCard {
         width: parent.width
+        title: "LOCK SCREEN"
+        note: "Super+Esc locks. If the shell ever isn't running, the same key falls back to hyprlock, and Super+Ctrl+Esc always opens hyprlock."
+
+        SettingRow {
+            icon: "lock"
+            title: "Opal lock screen"
+            subtitle: "Preview it without locking. Any password \"works\" there; Esc leaves"
+            Row {
+                spacing: 8
+                PillButton {
+                    text: "Preview"
+                    icon: "visibility"
+                    onClicked: {
+                        Ui.settingsOpen = false;
+                        Lock.preview();
+                    }
+                }
+                PillButton {
+                    text: "Lock now"
+                    icon: "lock"
+                    accent: true
+                    onClicked: {
+                        Ui.settingsOpen = false;
+                        Lock.lock();
+                    }
+                }
+            }
+        }
+        SettingRow {
+            icon: "music_note"
+            title: "Media controls"
+            subtitle: "What's playing, with previous / play / next"
+            OpalSwitch {
+                checked: Settings.lockMedia
+                onToggled: Settings.lockMedia = !Settings.lockMedia
+            }
+        }
+        SettingRow {
+            icon: "schedule"
+            title: "Seconds orbit"
+            subtitle: "A pearl that travels round the ring once a minute"
+            OpalSwitch {
+                checked: Settings.lockOrbit
+                onToggled: Settings.lockOrbit = !Settings.lockOrbit
+            }
+        }
+    }
+
+    SettingCard {
+        width: parent.width
         title: "WHEN IDLE"
         note: "Caffeine and apps that inhibit idle (like a playing video) pause these timers. The screen still locks before suspend either way."
 

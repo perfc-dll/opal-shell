@@ -18,7 +18,8 @@ for dest in \
     "$HOME/.config/systemd/user/niri-opal.service" \
     "$HOME/.config/systemd/user/opal-shell.service" \
     "$HOME/.config/systemd/user/dunst.service.d/opal.conf" \
-    "$HOME/.local/bin/niri-opal-session"; do
+    "$HOME/.local/bin/niri-opal-session" \
+    "$HOME/.local/bin/opal-lock"; do
     if [ -L "$dest" ] && case "$(readlink "$dest")" in "$REPO"/*) true ;; *) false ;; esac; then
         rm "$dest"
         echo "removed  $dest"

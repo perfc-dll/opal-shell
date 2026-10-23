@@ -139,7 +139,7 @@ Singleton {
 
     // ---- session ------------------------------------------------------------------------
     function lock() {
-        Quickshell.execDetached(["sh", "-c", "pidof hyprlock || hyprlock"]);
+        Lock.lock();
     }
     function suspend() {
         Quickshell.execDetached(["systemctl", "suspend"]);

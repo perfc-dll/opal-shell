@@ -79,6 +79,7 @@ SettingsPage {
         width: parent.width
         title: "SYSTEM"
         Bind { icon: "lock"; title: "Lock"; combo: "Super+Esc" }
+        Bind { icon: "lock_reset"; title: "Lock with hyprlock (fallback)"; combo: "Super+Ctrl+Esc" }
         Bind { icon: "photo_camera"; title: "Screenshot"; combo: "Print" }
         Bind { icon: "keyboard"; title: "All niri shortcuts"; combo: "Super+Shift+/" }
     }

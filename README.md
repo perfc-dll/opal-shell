@@ -37,6 +37,7 @@ separate **"Niri (Opal)"** login session next to your normal niri session.
 | **Wallpapers** | Thumbnail picker for your wallpaper folder, cross-fade transitions, shuffle. The wallpaper also stays behind niri's overview. |
 | **Edge visualizer** | Music-reactive bars along the screen edges, under your windows. Click-through, and gone after a second of silence. |
 | **Power menu** | Full-screen frosted menu. Log out, reboot and power off give you a 3-second countdown. |
+| **Lock screen** | `Super+Esc`. A GPU-shaded "eclipse": a black glass lens with a razor-thin pearl rim and coronal filaments that stir as you type. Each keystroke writes a procedurally generated alien glyph (random per lock, never derived from what you type). Enter pulls the glyphs into the ring; a wrong password makes the rim shudder and sends out a shockwave; the right one dissolves it into your wallpaper. Uses `ext-session-lock` + PAM, re-locks itself if the shell crashes, and falls back to hyprlock if the shell isn't running. Preview it from Settings → Power & idle. |
 | **Adaptive colour** | Optionally takes the accent colours from the wallpaper instead of the pink → violet → cyan signature palette. |
 | **Settings app** | `Super+I`: a floating glass window with 12 pages. Pick from 8 accent presets or adaptive colour, set glass tint, text size, animation speed or reduce motion, choose what the bar and island show, set up wallpaper fit, transitions and a slideshow, notification timing, audio devices, Wi-Fi, Bluetooth, idle lock / screen-off / suspend, scheduled night light, low-battery warning and the search engine. Includes a keybind cheat sheet. Changes apply live. |
 
@@ -54,7 +55,8 @@ separate **"Niri (Opal)"** login session next to your normal niri session.
     <td><img src="docs/screenshots/07-adaptive.jpg" alt="Adaptive colours"></td>
   </tr>
   <tr>
-    <td colspan="2"><img src="docs/screenshots/08-settings.jpg" alt="Settings app"></td>
+    <td><img src="docs/screenshots/08-settings.jpg" alt="Settings app"></td>
+    <td><img src="docs/screenshots/09-lock.jpg" alt="Lock screen"></td>
   </tr>
 </table>
 
@@ -104,6 +106,7 @@ session and `~/.config/niri/config.kdl` are not touched.
 | `Super+W` / `Super+Shift+W` | Wallpaper picker / random wallpaper |
 | `Super+Shift+B` | Show / hide the bar |
 | `Super+Shift+E` | Power menu (`Super+Ctrl+Shift+E` = niri's own quit) |
+| `Super+Esc` | Lock (`Super+Ctrl+Esc` = hyprlock fallback) |
 | `Super+O` | niri overview |
 | `Super+Ctrl+R` | Restart the shell |
 | `Super+Shift+/` | niri hotkey overlay (Opal's binds are labelled) |
@@ -147,6 +150,15 @@ docs/screenshots/
 - **Default session with ly on SELinux systems:** ly may be blocked from saving
   your last session (`AVC denied ... save.txt`). Writing `0` and `youruser:999`
   as two lines into `/etc/ly/save.txt` preselects the last session in ly's list.
+- **Lock screen safety:** only a PAM success unlocks; there is no IPC to unlock.
+  It authenticates with its own `quickshell/opal/pam/password` (pam_unix only), so an
+  enrolled fingerprint can't stall the password prompt. While locked, a flag in
+  `$XDG_RUNTIME_DIR` lets a restarted shell take the lock back over. If you
+  ever get stuck on a locked screen with no prompt, switch to a TTY
+  (Ctrl+Alt+F3), log in, and run `systemctl --user restart opal-shell`.
+- **Shaders:** after editing `quickshell/opal/shaders/*.frag`, run
+  `quickshell/opal/scripts/build-shaders.sh` (needs `qsb`, part of qt6-qtshadertools)
+  and restart the shell.
 - Wallpapers in the screenshots aren't part of this repo.
 
 ## Uninstall

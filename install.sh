@@ -80,6 +80,7 @@ link systemd/niri-opal.service          "$HOME/.config/systemd/user/niri-opal.se
 link systemd/opal-shell.service         "$HOME/.config/systemd/user/opal-shell.service"
 link systemd/dunst.service.d/opal.conf  "$HOME/.config/systemd/user/dunst.service.d/opal.conf"
 link bin/niri-opal-session              "$HOME/.local/bin/niri-opal-session"
+link bin/opal-lock                       "$HOME/.local/bin/opal-lock"
 systemctl --user daemon-reload
 
 echo ":: Fonts (Inter, Material Symbols Rounded)"

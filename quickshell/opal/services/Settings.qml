@@ -59,6 +59,8 @@ Singleton {
     property alias idleScreenOffMinutes: adapter.idleScreenOffMinutes
     property alias idleSuspendMinutes: adapter.idleSuspendMinutes
     property alias lowBatteryWarn: adapter.lowBatteryWarn
+    property alias lockMedia: adapter.lockMedia
+    property alias lockOrbit: adapter.lockOrbit
     property alias nightLight: adapter.nightLight
     property alias nightLightTemp: adapter.nightLightTemp
     property alias nightLightMode: adapter.nightLightMode
@@ -109,6 +111,8 @@ Singleton {
             idleScreenOffMinutes: 0,
             idleSuspendMinutes: 0,
             lowBatteryWarn: 15,
+            lockMedia: true,
+            lockOrbit: true,
             nightLight: false,
             nightLightTemp: 4000,
             nightLightMode: "always",
@@ -188,6 +192,8 @@ Singleton {
             property int idleScreenOffMinutes: 0
             property int idleSuspendMinutes: 0
             property int lowBatteryWarn: 15
+            property bool lockMedia: true
+            property bool lockOrbit: true
             property bool nightLight: false
             property int nightLightTemp: 4000
             property string nightLightMode: "always"
